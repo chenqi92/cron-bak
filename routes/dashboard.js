@@ -17,9 +17,11 @@ router.use(logRequest);
  */
 router.get('/overview', async (req, res) => {
   try {
-    // Get task counts
-    const allTasks = await BackupTask.findAll();
-    const activeTasks = await BackupTask.findAll(true);
+    const userId = req.user.id;
+
+    // Get task counts for current user
+    const allTasks = await BackupTask.findAll(userId);
+    const activeTasks = await BackupTask.findAll(userId, true);
     
     const taskStats = {
       total: allTasks.length,
@@ -120,12 +122,13 @@ router.get('/logs', validate(schemas.logQuery, 'query'), async (req, res) => {
 router.get('/statistics', async (req, res) => {
   try {
     const days = parseInt(req.query.days) || 30;
-    
-    // Get overall statistics
-    const stats = await BackupLog.getStatistics(days);
+    const userId = req.user.id;
 
-    // Get statistics by task type
-    const tasks = await BackupTask.findAll();
+    // Get overall statistics for current user
+    const stats = await BackupLog.getStatistics(days, userId);
+
+    // Get statistics by task type for current user
+    const tasks = await BackupTask.findAll(userId);
     const statsByType = {};
 
     for (const type of ['mysql_to_mysql', 'mysql_to_smb', 'minio_to_minio']) {
@@ -315,11 +318,12 @@ router.post('/cleanup', async (req, res) => {
 router.get('/export', async (req, res) => {
   try {
     const format = req.query.format || 'json';
-    
-    // Get all tasks (without credentials for security)
-    const tasks = await BackupTask.findAll();
-    const recentLogs = await BackupLog.findRecent(1000);
-    const stats = await BackupLog.getStatistics(30);
+    const userId = req.user.id;
+
+    // Get all tasks for current user (without credentials for security)
+    const tasks = await BackupTask.findAll(userId);
+    const recentLogs = await BackupLog.findRecent(1000, userId);
+    const stats = await BackupLog.getStatistics(30, userId);
 
     const exportData = {
       timestamp: new Date().toISOString(),

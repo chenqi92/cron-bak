@@ -39,6 +39,17 @@ A comprehensive, lightweight backup management service with scheduled task autom
 - Performance statistics and success rate tracking
 - Automated cleanup of old logs and temporary files
 
+### 🔔 Notification System
+- **Multi-channel notifications** with support for:
+  - **Enterprise WeChat (企业微信)** - Group bot webhooks with markdown support
+  - **DingTalk (钉钉)** - Group bot webhooks with signature verification
+  - **Custom Webhooks** - HTTP/HTTPS endpoints with multiple authentication methods
+  - **Synology Chat** - Channel webhooks with rich formatting
+- **Role-based management** - Super admins control global settings, users manage personal preferences
+- **Flexible triggers** - Backup start, success, and failure notifications
+- **Secure configuration** - Encrypted storage of sensitive credentials
+- **Test functionality** - Built-in testing for all notification channels
+
 ## Quick Start
 
 ### Prerequisites
@@ -97,13 +108,28 @@ chmod +x start.sh
    npm run setup
    ```
 
-4. **Start the service**
+4. **Start the service with notification system**
    ```bash
+   # Option 1: Start with automatic migration
+   npm run start:full
+
+   # Option 2: Manual migration then start
+   npm run migrate:notifications
    npm start
    ```
 
 5. **Access the web interface**
    Open your browser to `http://localhost:3000`
+
+   **Default credentials:**
+   - Username: `admin`
+   - Password: `admin123`
+
+6. **Configure notifications (optional)**
+   - Login as admin (super admin role)
+   - Navigate to "通知管理" (Notification Management)
+   - Enable desired notification modules
+   - Configure notification preferences
 
 ## 🎨 UI Features
 

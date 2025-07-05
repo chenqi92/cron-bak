@@ -260,6 +260,11 @@ class App {
             case 'logs':
                 // TODO: Load logs
                 break;
+            case 'notifications':
+                if (window.notificationManager) {
+                    await window.notificationManager.init();
+                }
+                break;
             case 'statistics':
                 // TODO: Load statistics
                 break;
@@ -390,6 +395,14 @@ window.showChangePassword = function() {
     // TODO: Implement change password modal
     alert('Change password functionality not yet implemented');
 };
+
+// Global navigation functions
+window.showDashboard = () => app.showView('dashboard');
+window.showTasks = () => app.showView('tasks');
+window.showLogs = () => app.showView('logs');
+window.showNotifications = () => app.showView('notifications');
+window.showStatistics = () => app.showView('statistics');
+window.showSettings = () => app.showView('settings');
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

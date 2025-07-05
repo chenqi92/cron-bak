@@ -4,6 +4,7 @@
     "dashboard": "仪表板",
     "tasks": "备份任务",
     "logs": "备份日志",
+    "notifications": "通知管理",
     "statistics": "统计信息",
     "settings": "设置",
     "changePassword": "修改密码",
@@ -230,5 +231,59 @@
       "general": "注册失败，请稍后重试",
       "network": "网络错误，请稍后重试"
     }
+  },
+  "notifications": {
+    "title": "通知管理",
+    "modules": "通知模块",
+    "preferences": "通知偏好",
+    "logs": "通知日志",
+    "globalSettings": "全局设置",
+    "userSettings": "用户设置",
+    "moduleStatus": "模块状态",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "enable": "启用",
+    "disable": "禁用",
+    "configure": "配置",
+    "test": "测试",
+    "save": "保存",
+    "cancel": "取消",
+    "testNotification": "测试通知",
+    "testSuccess": "测试通知发送成功",
+    "testFailed": "测试通知发送失败",
+    "configSaved": "配置保存成功",
+    "configFailed": "配置保存失败",
+    "modules": {
+      "wechat_work": "企业微信",
+      "dingtalk": "钉钉",
+      "webhook": "自定义Webhook",
+      "synology_chat": "Synology Chat"
+    },
+    "triggers": {
+      "backup_start": "备份开始",
+      "backup_success": "备份成功",
+      "backup_failure": "备份失败"
+    },
+    "config": {
+      "webhook_url": "Webhook URL",
+      "secret": "密钥",
+      "url": "URL",
+      "method": "HTTP方法",
+      "headers": "自定义请求头",
+      "auth_type": "认证类型",
+      "auth_config": "认证配置",
+      "token": "访问令牌",
+      "username": "用户名",
+      "password": "密码"
+    },
+    "help": {
+      "wechat_work": "企业微信群机器人Webhook URL，可在群设置中添加机器人获取",
+      "dingtalk": "钉钉群机器人Webhook URL，可在群设置中添加机器人获取",
+      "webhook": "自定义HTTP Webhook，支持多种认证方式",
+      "synology_chat": "Synology Chat频道Webhook URL"
+    },
+    "noModules": "暂无可用的通知模块",
+    "noPreferences": "暂无通知偏好设置",
+    "noLogs": "暂无通知日志"
   }
 }

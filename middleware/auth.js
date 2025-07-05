@@ -132,14 +132,67 @@ const logRequest = (req, res, next) => {
 /**
  * Middleware to check if user has admin privileges
  */
-const requireAdmin = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Authentication required' });
-  }
+const requireAdmin = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
 
-  // For now, all authenticated users are admins
-  // This can be extended later with role-based access control
-  next();
+    // Check if user is admin or super admin
+    if (!req.user.isAdmin()) {
+      logger.warn('Unauthorized admin access attempt', {
+        userId: req.user.id,
+        username: req.user.username,
+        role: req.user.role,
+        endpoint: req.originalUrl
+      });
+
+      return res.status(403).json({
+        error: 'Administrator privileges required',
+        message: '需要管理员权限才能访问此功能'
+      });
+    }
+
+    next();
+  } catch (error) {
+    logger.error('Admin check error:', error);
+    res.status(500).json({
+      error: 'Authorization check failed'
+    });
+  }
+};
+
+/**
+ * Middleware to check if user is super admin
+ */
+const requireSuperAdmin = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Check if user is super admin
+    if (!req.user.isSuperAdmin()) {
+      logger.warn('Unauthorized super admin access attempt', {
+        userId: req.user.id,
+        username: req.user.username,
+        role: req.user.role,
+        endpoint: req.originalUrl
+      });
+
+      return res.status(403).json({
+        error: 'Super administrator privileges required',
+        message: '需要超级管理员权限才能访问此功能'
+      });
+    }
+
+    next();
+  } catch (error) {
+    logger.error('Super admin check error:', error);
+    res.status(500).json({
+      error: 'Authorization check failed'
+    });
+  }
 };
 
 /**
@@ -185,6 +238,7 @@ module.exports = {
   optionalAuth,
   logRequest,
   requireAdmin,
+  requireSuperAdmin,
   validateApiKey,
   handleCors
 };

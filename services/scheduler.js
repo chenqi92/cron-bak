@@ -4,6 +4,7 @@ const BackupLog = require('../models/BackupLog');
 const mysqlBackup = require('./mysqlBackup');
 const minioSync = require('./minioSync');
 const smbBackup = require('./smbBackup');
+const notificationManager = require('./NotificationManager');
 const logger = require('../config/logger');
 
 // Store scheduled tasks
@@ -17,8 +18,8 @@ async function initializeScheduler() {
   try {
     logger.schedulerEvent('initializing');
     
-    // Load all active tasks
-    const activeTasks = await BackupTask.findAll(true);
+    // Load all active tasks across all users
+    const activeTasks = await BackupTask.findAllSystem(true);
     
     for (const task of activeTasks) {
       await scheduleTask(task);
@@ -161,6 +162,20 @@ async function executeTask(task) {
 
     logger.backupStart(task.id, task.name, task.type);
 
+    // Send backup start notification
+    try {
+      await notificationManager.sendNotification(task.user_id, 'backup_start', {
+        title: '备份任务开始',
+        task_id: task.id,
+        task_name: task.name,
+        task_type: task.type,
+        trigger_type: 'backup_start',
+        timestamp: new Date().toISOString()
+      });
+    } catch (notificationError) {
+      logger.error('Failed to send backup start notification:', notificationError);
+    }
+
     // Execute backup based on type
     let result;
     switch (task.type) {
@@ -196,6 +211,24 @@ async function executeTask(task) {
       }
     );
 
+    // Send backup success notification
+    try {
+      await notificationManager.sendNotification(task.user_id, 'backup_success', {
+        title: '备份任务成功',
+        task_id: task.id,
+        task_name: task.name,
+        task_type: task.type,
+        trigger_type: 'backup_success',
+        status: 'success',
+        duration: logEntry.duration,
+        bytes_transferred: result.bytesTransferred || 0,
+        files_transferred: result.filesTransferred || 0,
+        timestamp: new Date().toISOString()
+      });
+    } catch (notificationError) {
+      logger.error('Failed to send backup success notification:', notificationError);
+    }
+
     // Update next run time
     const nextRun = getNextRunTime(task.schedule);
     await task.updateNextRun(nextRun);
@@ -211,6 +244,23 @@ async function executeTask(task) {
     }
 
     logger.backupError(task.id, task.name, error, logEntry?.duration);
+
+    // Send backup failure notification
+    try {
+      await notificationManager.sendNotification(task.user_id, 'backup_failure', {
+        title: '备份任务失败',
+        task_id: task.id,
+        task_name: task.name,
+        task_type: task.type,
+        trigger_type: 'backup_failure',
+        status: 'failed',
+        duration: logEntry?.duration,
+        error_details: error.message,
+        timestamp: new Date().toISOString()
+      });
+    } catch (notificationError) {
+      logger.error('Failed to send backup failure notification:', notificationError);
+    }
   } finally {
     // Remove from running tasks
     runningTasks.delete(task.id);

@@ -4,6 +4,7 @@
     "dashboard": "Dashboard",
     "tasks": "Backup Tasks",
     "logs": "Backup Logs",
+    "notifications": "Notifications",
     "statistics": "Statistics",
     "settings": "Settings",
     "changePassword": "Change Password",
@@ -230,5 +231,59 @@
       "general": "Registration failed, please try again later",
       "network": "Network error, please try again later"
     }
+  },
+  "notifications": {
+    "title": "Notification Management",
+    "modules": "Notification Modules",
+    "preferences": "Notification Preferences",
+    "logs": "Notification Logs",
+    "globalSettings": "Global Settings",
+    "userSettings": "User Settings",
+    "moduleStatus": "Module Status",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "configure": "Configure",
+    "test": "Test",
+    "save": "Save",
+    "cancel": "Cancel",
+    "testNotification": "Test Notification",
+    "testSuccess": "Test notification sent successfully",
+    "testFailed": "Test notification failed",
+    "configSaved": "Configuration saved successfully",
+    "configFailed": "Configuration save failed",
+    "modules": {
+      "wechat_work": "WeChat Work",
+      "dingtalk": "DingTalk",
+      "webhook": "Custom Webhook",
+      "synology_chat": "Synology Chat"
+    },
+    "triggers": {
+      "backup_start": "Backup Start",
+      "backup_success": "Backup Success",
+      "backup_failure": "Backup Failure"
+    },
+    "config": {
+      "webhook_url": "Webhook URL",
+      "secret": "Secret",
+      "url": "URL",
+      "method": "HTTP Method",
+      "headers": "Custom Headers",
+      "auth_type": "Auth Type",
+      "auth_config": "Auth Config",
+      "token": "Access Token",
+      "username": "Username",
+      "password": "Password"
+    },
+    "help": {
+      "wechat_work": "WeChat Work group bot webhook URL, get it from group settings",
+      "dingtalk": "DingTalk group bot webhook URL, get it from group settings",
+      "webhook": "Custom HTTP webhook with multiple authentication methods",
+      "synology_chat": "Synology Chat channel webhook URL"
+    },
+    "noModules": "No notification modules available",
+    "noPreferences": "No notification preferences configured",
+    "noLogs": "No notification logs"
   }
 }

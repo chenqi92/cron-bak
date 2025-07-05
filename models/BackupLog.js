@@ -89,12 +89,13 @@ class BackupLog {
   }
 
   /**
-   * Get recent logs across all tasks
+   * Get recent logs across all tasks for a user
    * @param {number} limit - Maximum number of logs to return
+   * @param {number} userId - User ID (optional, if null returns all)
    * @param {string} status - Filter by status (optional)
    * @returns {Promise<BackupLog[]>} - Array of logs
    */
-  static async findRecent(limit = 100, status = null) {
+  static async findRecent(limit = 100, userId = null, status = null) {
     try {
       let sql = `
         SELECT bl.*, bt.name as task_name, bt.type as task_type
@@ -102,10 +103,20 @@ class BackupLog {
         JOIN backup_tasks bt ON bl.task_id = bt.id
       `;
       const params = [];
+      const conditions = [];
+
+      if (userId) {
+        conditions.push('bt.user_id = ?');
+        params.push(userId);
+      }
 
       if (status) {
-        sql += ' WHERE bl.status = ?';
+        conditions.push('bl.status = ?');
         params.push(status);
+      }
+
+      if (conditions.length > 0) {
+        sql += ' WHERE ' + conditions.join(' AND ');
       }
 
       sql += ' ORDER BY bl.started_at DESC LIMIT ?';
@@ -127,32 +138,46 @@ class BackupLog {
   /**
    * Get backup statistics
    * @param {number} days - Number of days to look back
+   * @param {number} userId - User ID (optional, if null returns all)
    * @returns {Promise<object>} - Statistics object
    */
-  static async getStatistics(days = 30) {
+  static async getStatistics(days = 30, userId = null) {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - days);
 
-      const stats = await getQuery(`
-        SELECT 
+      let sql = `
+        SELECT
           COUNT(*) as total_backups,
-          SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as successful_backups,
-          SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as failed_backups,
-          SUM(CASE WHEN status = 'running' THEN 1 ELSE 0 END) as running_backups,
-          AVG(duration) as avg_duration,
-          SUM(bytes_transferred) as total_bytes_transferred,
-          SUM(files_transferred) as total_files_transferred
-        FROM backup_logs 
-        WHERE started_at >= ?
-      `, [cutoffDate.toISOString()]);
+          SUM(CASE WHEN bl.status = 'success' THEN 1 ELSE 0 END) as successful_backups,
+          SUM(CASE WHEN bl.status = 'failed' THEN 1 ELSE 0 END) as failed_backups,
+          SUM(CASE WHEN bl.status = 'running' THEN 1 ELSE 0 END) as running_backups,
+          AVG(bl.duration) as avg_duration,
+          SUM(bl.bytes_transferred) as total_bytes_transferred,
+          SUM(bl.files_transferred) as total_files_transferred
+        FROM backup_logs bl
+      `;
+
+      const params = [cutoffDate.toISOString()];
+
+      if (userId) {
+        sql += `
+          JOIN backup_tasks bt ON bl.task_id = bt.id
+          WHERE bl.started_at >= ? AND bt.user_id = ?
+        `;
+        params.push(userId);
+      } else {
+        sql += ' WHERE bl.started_at >= ?';
+      }
+
+      const stats = await getQuery(sql, params);
 
       return {
         totalBackups: stats.total_backups || 0,
         successfulBackups: stats.successful_backups || 0,
         failedBackups: stats.failed_backups || 0,
         runningBackups: stats.running_backups || 0,
-        successRate: stats.total_backups > 0 
+        successRate: stats.total_backups > 0
           ? ((stats.successful_backups / stats.total_backups) * 100).toFixed(2)
           : 0,
         avgDuration: stats.avg_duration || 0,

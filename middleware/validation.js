@@ -152,6 +152,27 @@ const schemas = {
     limit: Joi.number().integer().min(1).max(100).default(20)
   }),
 
+  // Notification schemas
+  updateNotificationPreference: Joi.object({
+    is_enabled: Joi.boolean(),
+    config: Joi.object().allow(null),
+    triggers: Joi.array().items(
+      Joi.string().valid('backup_start', 'backup_success', 'backup_failure')
+    )
+  }),
+
+  updateModuleEnabled: Joi.object({
+    enabled: Joi.boolean().required()
+  }),
+
+  updateModuleConfig: Joi.object({
+    config: Joi.object().required()
+  }),
+
+  testNotification: Joi.object({
+    config: Joi.object().required()
+  }),
+
   logQuery: Joi.object({
     taskId: Joi.number().integer().min(1),
     status: Joi.string().valid('running', 'success', 'failed', 'cancelled'),

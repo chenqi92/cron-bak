@@ -36,6 +36,8 @@ async function initializeDatabase() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
+        role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin', 'super_admin')),
+        is_super_admin BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         last_login DATETIME,
         is_active BOOLEAN DEFAULT 1
@@ -103,6 +105,56 @@ async function initializeDatabase() {
       )
     `);
 
+    // Notification modules table
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS notification_modules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        type TEXT NOT NULL CHECK (type IN ('wechat_work', 'dingtalk', 'webhook', 'synology_chat')),
+        display_name TEXT NOT NULL,
+        description TEXT,
+        is_enabled BOOLEAN DEFAULT 0,
+        global_config TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // User notification preferences table
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS user_notification_preferences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        module_id INTEGER NOT NULL,
+        is_enabled BOOLEAN DEFAULT 0,
+        config TEXT,
+        triggers TEXT DEFAULT '["backup_start","backup_success","backup_failure"]',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+        FOREIGN KEY (module_id) REFERENCES notification_modules (id) ON DELETE CASCADE,
+        UNIQUE(user_id, module_id)
+      )
+    `);
+
+    // Notification logs table
+    database.exec(`
+      CREATE TABLE IF NOT EXISTS notification_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        module_id INTEGER NOT NULL,
+        task_id INTEGER,
+        trigger_type TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('sent', 'failed', 'pending')),
+        message TEXT,
+        error_details TEXT,
+        sent_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+        FOREIGN KEY (module_id) REFERENCES notification_modules (id) ON DELETE CASCADE,
+        FOREIGN KEY (task_id) REFERENCES backup_tasks (id) ON DELETE SET NULL
+      )
+    `);
+
     // Run database migrations
     await runMigrations(database);
 
@@ -159,6 +211,44 @@ async function runMigrations(database) {
         logger.info('Migration completed: add_user_id_columns');
       } catch (error) {
         logger.warn('Migration add_user_id_columns already applied or failed:', error.message);
+      }
+    }
+
+    // Migration 2: Add role and notification system
+    const migration2 = database.prepare('SELECT * FROM migrations WHERE name = ?').get('add_notification_system');
+    if (!migration2) {
+      try {
+        // Add role and is_super_admin columns to users table
+        const userColumns = database.pragma('table_info(users)');
+        const hasRole = userColumns.some(col => col.name === 'role');
+        const hasSuperAdmin = userColumns.some(col => col.name === 'is_super_admin');
+
+        if (!hasRole) {
+          database.exec('ALTER TABLE users ADD COLUMN role TEXT DEFAULT "user"');
+        }
+        if (!hasSuperAdmin) {
+          database.exec('ALTER TABLE users ADD COLUMN is_super_admin BOOLEAN DEFAULT 0');
+        }
+
+        // Set admin user as super admin
+        database.exec('UPDATE users SET role = "super_admin", is_super_admin = 1 WHERE username = ?', [process.env.ADMIN_USERNAME || 'admin']);
+
+        // Insert default notification modules
+        const insertModule = database.prepare(`
+          INSERT OR IGNORE INTO notification_modules (name, type, display_name, description, is_enabled)
+          VALUES (?, ?, ?, ?, ?)
+        `);
+
+        insertModule.run('wechat_work', 'wechat_work', '企业微信', '通过企业微信发送通知消息', 0);
+        insertModule.run('dingtalk', 'dingtalk', '钉钉', '通过钉钉发送通知消息', 0);
+        insertModule.run('webhook', 'webhook', '自定义Webhook', '通过HTTP Webhook发送通知', 0);
+        insertModule.run('synology_chat', 'synology_chat', 'Synology Chat', '通过Synology Chat发送通知', 0);
+
+        // Record migration
+        database.prepare('INSERT INTO migrations (name) VALUES (?)').run('add_notification_system');
+        logger.info('Migration completed: add_notification_system');
+      } catch (error) {
+        logger.warn('Migration add_notification_system already applied or failed:', error.message);
       }
     }
 

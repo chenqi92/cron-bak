@@ -96,7 +96,13 @@ router.post('/login', validate(schemas.login), async (req, res) => {
         if (!adminUser) {
           // Create admin user if it doesn't exist
           adminUser = await User.create(username, password);
-          logger.info('Admin user created', { username });
+          // Set as super admin
+          await adminUser.updateRole('super_admin');
+          logger.info('Admin user created and set as super admin', { username });
+        } else if (!adminUser.isSuperAdmin()) {
+          // Ensure existing admin user is super admin
+          await adminUser.updateRole('super_admin');
+          logger.info('Admin user role updated to super admin', { username });
         }
 
         // Generate JWT token

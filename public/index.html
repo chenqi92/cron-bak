@@ -91,6 +91,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showNotifications()">
+                                <i class="fas fa-bell me-2"></i>
+                                <span data-i18n="nav.notifications">Notifications</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#" onclick="showStatistics()">
                                 <i class="fas fa-chart-bar me-2"></i>
                                 <span data-i18n="nav.statistics">Statistics</span>
@@ -275,6 +281,71 @@
                     <!-- Logs content -->
                 </div>
 
+                <!-- Notifications View -->
+                <div id="notifications-view" class="content-view" style="display: none;">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2" data-i18n="notifications.title">Notification Management</h1>
+                    </div>
+
+                    <!-- Notification Tabs -->
+                    <ul class="nav nav-tabs" id="notificationTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences-pane" type="button" role="tab">
+                                <i class="fas fa-user-cog me-2"></i>
+                                <span data-i18n="notifications.preferences">Notification Preferences</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation" id="modules-tab-item" style="display: none;">
+                            <button class="nav-link" id="modules-tab" data-bs-toggle="tab" data-bs-target="#modules-pane" type="button" role="tab">
+                                <i class="fas fa-puzzle-piece me-2"></i>
+                                <span data-i18n="notifications.modules">Notification Modules</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#notification-logs-pane" type="button" role="tab">
+                                <i class="fas fa-history me-2"></i>
+                                <span data-i18n="notifications.logs">Notification Logs</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="notificationTabContent">
+                        <!-- User Preferences Tab -->
+                        <div class="tab-pane fade show active" id="preferences-pane" role="tabpanel">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div id="notification-preferences-container">
+                                        <!-- Populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modules Management Tab (Super Admin Only) -->
+                        <div class="tab-pane fade" id="modules-pane" role="tabpanel">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div id="notification-modules-container">
+                                        <!-- Populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notification Logs Tab -->
+                        <div class="tab-pane fade" id="notification-logs-pane" role="tabpanel">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div id="notification-logs-container">
+                                        <!-- Populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="statistics-view" class="content-view" style="display: none;">
                     <h1 class="h2">Statistics</h1>
                     <!-- Statistics content -->
@@ -321,6 +392,41 @@
         </div>
     </div>
 
+    <!-- Notification Configuration Modal -->
+    <div class="modal fade" id="notificationConfigModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-cog me-2"></i>
+                        <span data-i18n="notifications.configure">Configure Notification</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="notificationConfigForm">
+                        <div id="notification-config-fields">
+                            <!-- Dynamic fields will be inserted here -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <span data-i18n="notifications.cancel">Cancel</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="notificationManager.testCurrentConfig()">
+                        <i class="fas fa-vial me-1"></i>
+                        <span data-i18n="notifications.test">Test</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="notificationManager.saveConfig()">
+                        <i class="fas fa-save me-1"></i>
+                        <span data-i18n="notifications.save">Save</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="js/i18n.js"></script>
@@ -329,6 +435,7 @@
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/tasks.js"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

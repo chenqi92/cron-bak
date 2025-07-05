@@ -7,6 +7,8 @@ class User {
     this.id = data.id;
     this.username = data.username;
     this.password_hash = data.password_hash;
+    this.role = data.role || 'user';
+    this.is_super_admin = data.is_super_admin || false;
     this.created_at = data.created_at;
     this.last_login = data.last_login;
     this.is_active = data.is_active;
@@ -247,6 +249,50 @@ class User {
   }
 
   /**
+   * Check if user is super admin
+   * @returns {boolean} - True if user is super admin
+   */
+  isSuperAdmin() {
+    return this.is_super_admin === true || this.role === 'super_admin';
+  }
+
+  /**
+   * Check if user has admin privileges
+   * @returns {boolean} - True if user is admin or super admin
+   */
+  isAdmin() {
+    return this.role === 'admin' || this.role === 'super_admin';
+  }
+
+  /**
+   * Update user role
+   * @param {string} role - New role (user, admin, super_admin)
+   * @returns {Promise<void>}
+   */
+  async updateRole(role) {
+    try {
+      const validRoles = ['user', 'admin', 'super_admin'];
+      if (!validRoles.includes(role)) {
+        throw new Error('Invalid role');
+      }
+
+      const isSuperAdmin = role === 'super_admin';
+
+      await runQuery(
+        'UPDATE users SET role = ?, is_super_admin = ? WHERE id = ?',
+        [role, isSuperAdmin, this.id]
+      );
+
+      this.role = role;
+      this.is_super_admin = isSuperAdmin;
+      logger.info('User role updated', { userId: this.id, username: this.username, role });
+    } catch (error) {
+      logger.error('Error updating user role:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Convert to JSON (excluding sensitive data)
    * @returns {object} - User data without password hash
    */
@@ -254,6 +300,8 @@ class User {
     return {
       id: this.id,
       username: this.username,
+      role: this.role,
+      is_super_admin: this.is_super_admin,
       created_at: this.created_at,
       last_login: this.last_login,
       is_active: this.is_active

@@ -255,11 +255,19 @@ router.delete('/:id', validate(schemas.idParam, 'params'), async (req, res) => {
 router.post('/:id/run', validate(schemas.idParam, 'params'), async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
     const task = await BackupTask.findById(id);
 
     if (!task) {
       return res.status(404).json({
         error: 'Backup task not found'
+      });
+    }
+
+    // Check if user owns this task
+    if (!task.belongsToUser(userId)) {
+      return res.status(403).json({
+        error: 'Access denied'
       });
     }
 
@@ -306,11 +314,19 @@ router.get('/:id/logs',
     try {
       const { id } = req.params;
       const { limit } = req.query;
+      const userId = req.user.id;
 
       const task = await BackupTask.findById(id);
       if (!task) {
         return res.status(404).json({
           error: 'Backup task not found'
+        });
+      }
+
+      // Check if user owns this task
+      if (!task.belongsToUser(userId)) {
+        return res.status(403).json({
+          error: 'Access denied'
         });
       }
 
@@ -337,11 +353,19 @@ router.get('/:id/logs',
 router.post('/:id/toggle', validate(schemas.idParam, 'params'), async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
     const task = await BackupTask.findById(id);
 
     if (!task) {
       return res.status(404).json({
         error: 'Backup task not found'
+      });
+    }
+
+    // Check if user owns this task
+    if (!task.belongsToUser(userId)) {
+      return res.status(403).json({
+        error: 'Access denied'
       });
     }
 
