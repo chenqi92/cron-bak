@@ -1,0 +1,39 @@
+# Docker Compose override for development
+# This file is automatically loaded by docker-compose
+# Use this for development-specific configurations
+
+version: '3.8'
+
+services:
+  backup-service:
+    # Override for development
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+    volumes:
+      # Mount source code for development (uncomment for live reload)
+      # - ./:/app
+      # - /app/node_modules
+      
+      # Mount local .env file if it exists
+      - ./.env:/app/.env:ro
+      
+      # Development data persistence
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./temp:/app/temp
+    ports:
+      # Expose additional ports for debugging if needed
+      - "3000:3000"
+      # - "9229:9229"  # Node.js debug port
+    
+    # Override command for development with debugging
+    # command: ["node", "--inspect=0.0.0.0:9229", "server.js"]
+    
+    # Development labels
+    labels:
+      - "com.backup-service.environment=development"

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="register.title">用户注册 - 备份服务</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Register for backup service">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/modern-enhancements.css" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💾</text></svg>">
+</head>
+<body class="theme-transition">
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <!-- Left Side - Branding -->
+            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background: var(--bg-gradient-primary);">
+                <div class="text-center text-white">
+                    <div class="mb-4">
+                        <i class="fas fa-shield-alt fa-5x mb-3" style="opacity: 0.9;"></i>
+                        <h1 class="display-4 fw-bold mb-3" data-i18n="register.welcome">欢迎加入</h1>
+                        <h2 class="h3 mb-4" data-i18n="register.subtitle">安全可靠的备份服务</h2>
+                        <p class="lead" data-i18n="register.description">
+                            保护您的数据，让备份变得简单高效
+                        </p>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-lock fa-2x mb-2"></i>
+                            <p class="small" data-i18n="register.feature1">安全加密</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <p class="small" data-i18n="register.feature2">定时备份</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-cloud fa-2x mb-2"></i>
+                            <p class="small" data-i18n="register.feature3">多端同步</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Registration Form -->
+            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                <div class="w-100" style="max-width: 400px;">
+                    <div class="card glass-card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <!-- Header -->
+                            <div class="text-center mb-4">
+                                <div class="d-lg-none mb-3">
+                                    <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                                </div>
+                                <h2 class="h3 fw-bold mb-2" data-i18n="register.formTitle">创建账户</h2>
+                                <p class="text-muted" data-i18n="register.formSubtitle">
+                                    填写信息开始使用备份服务
+                                </p>
+                            </div>
+
+                            <!-- Registration Form -->
+                            <form id="registerForm" novalidate>
+                                <!-- Username Field -->
+                                <div class="floating-label mb-4">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           name="username" 
+                                           placeholder=" " 
+                                           required
+                                           autocomplete="username">
+                                    <label for="username" data-i18n="register.username">用户名</label>
+                                    <div class="invalid-feedback"></div>
+                                    <div class="form-text">
+                                        <small data-i18n="register.usernameHelp">3-30个字符，只能包含字母、数字和下划线</small>
+                                    </div>
+                                </div>
+
+                                <!-- Password Field -->
+                                <div class="floating-label mb-4">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           placeholder=" " 
+                                           required
+                                           autocomplete="new-password">
+                                    <label for="password" data-i18n="register.password">密码</label>
+                                    <div class="invalid-feedback"></div>
+                                    <div class="form-text">
+                                        <small data-i18n="register.passwordHelp">至少6个字符</small>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password Field -->
+                                <div class="floating-label mb-4">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirmPassword" 
+                                           name="confirmPassword" 
+                                           placeholder=" " 
+                                           required
+                                           autocomplete="new-password">
+                                    <label for="confirmPassword" data-i18n="register.confirmPassword">确认密码</label>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" 
+                                        class="btn btn-primary w-100 mb-3" 
+                                        id="registerBtn">
+                                    <span data-i18n="register.submit">注册账户</span>
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+
+                                <!-- Login Link -->
+                                <div class="text-center">
+                                    <span class="text-muted" data-i18n="register.hasAccount">已有账户？</span>
+                                    <a href="login.html" class="text-decoration-none" data-i18n="register.loginLink">立即登录</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Language Toggle -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-secondary btn-sm" id="languageToggle">
+                            <i class="fas fa-globe me-1"></i>
+                            <span id="currentLanguage">中文</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html>

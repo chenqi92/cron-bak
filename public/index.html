@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-title="nav.title" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light dark">
+    <title data-i18n="nav.title">Backup Service - Dashboard</title>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" as="style">
+
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/modern-enhancements.css" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💾</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--navbar-bg);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" onclick="showDashboard()">
+                <i class="fas fa-database me-2"></i>
+                <span data-i18n="nav.title">Backup Service</span>
+            </a>
+
+            <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+                <!-- Theme Toggle -->
+                <button class="btn btn-link navbar-btn me-2" id="themeToggle" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i id="themeIcon" class="fas fa-moon text-light"></i>
+                </button>
+
+                <!-- Language Toggle -->
+                <button class="btn btn-link navbar-btn me-3" id="languageToggle" title="Switch Language" aria-label="Switch Language">
+                    <i class="fas fa-globe me-1 text-light"></i>
+                    <span id="languageText" class="text-light">中文</span>
+                </button>
+
+                <!-- User Dropdown -->
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user me-1"></i>
+                        <span id="username" data-user-info="username">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="showChangePassword()">
+                            <i class="fas fa-key me-2"></i>
+                            <span data-i18n="nav.changePassword">Change Password</span>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            <span data-i18n="nav.logout">Logout</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showDashboard()">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                <span data-i18n="nav.dashboard">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showTasks()">
+                                <i class="fas fa-tasks me-2"></i>
+                                <span data-i18n="nav.tasks">Backup Tasks</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showLogs()">
+                                <i class="fas fa-list-alt me-2"></i>
+                                <span data-i18n="nav.logs">Backup Logs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showStatistics()">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                <span data-i18n="nav.statistics">Statistics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSettings()">
+                                <i class="fas fa-cog me-2"></i>
+                                <span data-i18n="nav.settings">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main id="main-content" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Dashboard View -->
+                <div id="dashboard-view" class="content-view">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2" data-i18n="dashboard.title">Dashboard</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                <span data-i18n="dashboard.refresh">Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Statistics Cards -->
+                    <div class="row mb-5">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow-lg h-100 stat-card fade-in">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-2" data-i18n="dashboard.totalTasks">
+                                                Total Tasks
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold" id="total-tasks">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-tasks fa-2x stat-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow-lg h-100 stat-card fade-in" style="animation-delay: 0.1s;">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-2" data-i18n="dashboard.activeTasks">
+                                                Active Tasks
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold" id="active-tasks">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-play fa-2x stat-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow-lg h-100 stat-card fade-in" style="animation-delay: 0.2s;">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-2" data-i18n="dashboard.runningBackups">
+                                                Running Backups
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold" id="running-backups">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-spinner fa-2x stat-icon pulse"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow-lg h-100 stat-card fade-in" style="animation-delay: 0.3s;">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-2" data-i18n="dashboard.successRate">
+                                                Success Rate (30d)
+                                            </div>
+                                            <div class="h5 mb-0 font-weight-bold" id="success-rate">0%</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-percentage fa-2x stat-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Recent Backup Logs</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="recent-logs-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Task</th>
+                                                    <th>Status</th>
+                                                    <th>Started</th>
+                                                    <th>Duration</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Populated by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Next Scheduled Runs</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="next-runs-list">
+                                        <!-- Populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks View -->
+                <div id="tasks-view" class="content-view" style="display: none;">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">Backup Tasks</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-primary" onclick="showCreateTaskModal()">
+                                <i class="fas fa-plus me-1"></i>
+                                Create Task
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="tasks-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Schedule</th>
+                                    <th>Status</th>
+                                    <th>Last Run</th>
+                                    <th>Next Run</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Other views will be added here -->
+                <div id="logs-view" class="content-view" style="display: none;">
+                    <h1 class="h2">Backup Logs</h1>
+                    <!-- Logs content -->
+                </div>
+
+                <div id="statistics-view" class="content-view" style="display: none;">
+                    <h1 class="h2">Statistics</h1>
+                    <!-- Statistics content -->
+                </div>
+
+                <div id="settings-view" class="content-view" style="display: none;">
+                    <h1 class="h2">Settings</h1>
+                    <!-- Settings content -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Login to Backup Service
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="login-username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="login-password" required>
+                        </div>
+                        <div id="login-error" class="alert alert-danger" style="display: none;"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="login()">
+                        <i class="fas fa-sign-in-alt me-1"></i>
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="login.title">用户登录 - 备份服务</title>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Login to backup service">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/modern-enhancements.css" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💾</text></svg>">
+</head>
+<body class="theme-transition">
+    <div class="container-fluid vh-100">
+        <div class="row h-100">
+            <!-- Left Side - Branding -->
+            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background: var(--bg-gradient-primary);">
+                <div class="text-center text-white">
+                    <div class="mb-4">
+                        <i class="fas fa-shield-alt fa-5x mb-3" style="opacity: 0.9;"></i>
+                        <h1 class="display-4 fw-bold mb-3" data-i18n="login.welcome">欢迎回来</h1>
+                        <h2 class="h3 mb-4" data-i18n="login.subtitle">安全可靠的备份服务</h2>
+                        <p class="lead" data-i18n="login.description">
+                            登录您的账户，继续管理您的备份任务
+                        </p>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-lock fa-2x mb-2"></i>
+                            <p class="small" data-i18n="login.feature1">安全加密</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <p class="small" data-i18n="login.feature2">定时备份</p>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-cloud fa-2x mb-2"></i>
+                            <p class="small" data-i18n="login.feature3">多端同步</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                <div class="w-100" style="max-width: 400px;">
+                    <div class="card glass-card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <!-- Header -->
+                            <div class="text-center mb-4">
+                                <div class="d-lg-none mb-3">
+                                    <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                                </div>
+                                <h2 class="h3 fw-bold mb-2" data-i18n="login.formTitle">登录账户</h2>
+                                <p class="text-muted" data-i18n="login.formSubtitle">
+                                    输入您的凭据以访问备份服务
+                                </p>
+                            </div>
+
+                            <!-- Login Form -->
+                            <form id="loginForm" novalidate>
+                                <!-- Username Field -->
+                                <div class="floating-label mb-4">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           name="username" 
+                                           placeholder=" " 
+                                           required
+                                           autocomplete="username">
+                                    <label for="username" data-i18n="login.username">用户名</label>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+
+                                <!-- Password Field -->
+                                <div class="floating-label mb-4">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           placeholder=" " 
+                                           required
+                                           autocomplete="current-password">
+                                    <label for="password" data-i18n="login.password">密码</label>
+                                    <div class="invalid-feedback"></div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" 
+                                        class="btn btn-primary w-100 mb-3" 
+                                        id="loginBtn">
+                                    <span data-i18n="login.submit">登录</span>
+                                    <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+
+                                <!-- Register Link -->
+                                <div class="text-center">
+                                    <span class="text-muted" data-i18n="login.noAccount">还没有账户？</span>
+                                    <a href="register.html" class="text-decoration-none" data-i18n="login.registerLink">立即注册</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Language Toggle -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-secondary btn-sm" id="languageToggle">
+                            <i class="fas fa-globe me-1"></i>
+                            <span id="currentLanguage">中文</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/ui-enhancements.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

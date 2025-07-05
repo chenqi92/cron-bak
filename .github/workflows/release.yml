@@ -1,0 +1,162 @@
+name: Release and Tag
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'VERSION'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (leave empty to use VERSION file)'
+        required: false
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read VERSION file
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            echo "$VERSION" > VERSION
+          else
+            VERSION=$(cat VERSION)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag v${{ steps.version.outputs.version }} already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag v${{ steps.version.outputs.version }} does not exist"
+          fi
+
+      - name: Update package.json version
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json package-lock.json VERSION
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}" || exit 0
+
+      - name: Create Git tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          git tag -a "v${{ steps.version.outputs.version }}" -m "Release version ${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
+
+      - name: Generate changelog
+        if: steps.check_tag.outputs.exists == 'false'
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          
+          if [ -n "$PREV_TAG" ]; then
+            echo "## Changes since $PREV_TAG" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            git log --pretty=format:"- %s (%h)" $PREV_TAG..HEAD >> CHANGELOG.md
+          else
+            echo "## Initial Release" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "- Initial release of Backup Service" >> CHANGELOG.md
+          fi
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          cat CHANGELOG.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          body: |
+            # Backup Service v${{ steps.version.outputs.version }}
+            
+            ## 🚀 Features
+            - Comprehensive backup management service
+            - Support for MySQL, MinIO, and SMB backups
+            - Web-based dashboard and API
+            - Docker support with multi-architecture builds
+            
+            ## 📦 Docker Images
+            
+            ### Docker Hub
+            ```bash
+            docker pull ${{ github.repository_owner }}/backup-service:${{ steps.version.outputs.version }}
+            docker pull ${{ github.repository_owner }}/backup-service:latest
+            ```
+            
+            ### GitHub Container Registry
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+            docker pull ghcr.io/${{ github.repository }}:latest
+            ```
+            
+            ## 🏗️ Supported Architectures
+            - linux/amd64
+            - linux/arm64
+            - linux/arm/v7
+            
+            ## 📋 Quick Start
+            
+            ### Using Docker
+            ```bash
+            docker run -d \
+              --name backup-service \
+              -p 3000:3000 \
+              -v backup_data:/app/data \
+              -v backup_logs:/app/logs \
+              ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+            ```
+            
+            ### Using Docker Compose
+            ```bash
+            curl -O https://raw.githubusercontent.com/${{ github.repository }}/v${{ steps.version.outputs.version }}/docker-compose.yml
+            docker-compose up -d
+            ```
+            
+            ### From Source
+            ```bash
+            git clone https://github.com/${{ github.repository }}.git
+            cd $(basename ${{ github.repository }})
+            git checkout v${{ steps.version.outputs.version }}
+            npm install
+            npm start
+            ```
+            
+            ## 🔐 Default Credentials
+            - Username: `admin`
+            - Password: `backup123!` (change immediately)
+            
+            ## 📚 Documentation
+            - [README.md](https://github.com/${{ github.repository }}/blob/v${{ steps.version.outputs.version }}/README.md)
+            - [Quick Start Guide](https://github.com/${{ github.repository }}/blob/v${{ steps.version.outputs.version }}/QUICK_START.md)
+            
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false

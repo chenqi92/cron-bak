@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  backup-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: backup-service:latest
+    container_name: backup-service
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Override these in .env file or docker-compose.override.yml
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-backup123!}
+      - JWT_SECRET=${JWT_SECRET:-your_jwt_secret_here}
+      - SESSION_SECRET=${SESSION_SECRET:-your_session_secret_here}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-12345678901234567890123456789012}
+      - DB_PATH=/app/data/backup_service.db
+      - LOG_FILE=/app/logs/backup_service.log
+      - BACKUP_TEMP_DIR=/app/temp
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - BACKUP_LOG_RETENTION_DAYS=${BACKUP_LOG_RETENTION_DAYS:-30}
+      - MAX_CONCURRENT_BACKUPS=${MAX_CONCURRENT_BACKUPS:-3}
+    volumes:
+      # Persist data, logs, and temp files
+      - backup_data:/app/data
+      - backup_logs:/app/logs
+      - backup_temp:/app/temp
+      # Optional: Mount custom .env file
+      # - ./.env:/app/.env:ro
+    networks:
+      - backup_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.docker.compose.project=backup-service"
+      - "com.backup-service.version=1.0.0"
+
+  # Optional: Add a reverse proxy for HTTPS
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: backup-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - backup-service
+  #   networks:
+  #     - backup_network
+
+volumes:
+  backup_data:
+    driver: local
+    labels:
+      - "com.backup-service.volume=data"
+  backup_logs:
+    driver: local
+    labels:
+      - "com.backup-service.volume=logs"
+  backup_temp:
+    driver: local
+    labels:
+      - "com.backup-service.volume=temp"
+
+networks:
+  backup_network:
+    driver: bridge
+    labels:
+      - "com.backup-service.network=main"
