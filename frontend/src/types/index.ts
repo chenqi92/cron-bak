@@ -6,6 +6,24 @@ export interface ApiResponse<T = any> {
   message?: string
 }
 
+// Auth specific response types
+export interface LoginResponse {
+  success: boolean
+  token?: string
+  user?: User
+  message?: string
+  error?: string
+}
+
+export interface AuthStatusResponse {
+  success: boolean
+  isConfigured?: boolean
+  isAuthenticated?: boolean
+  user?: User | null
+  adminUsername?: string | null
+  error?: string
+}
+
 // User Types
 export interface User {
   id: number

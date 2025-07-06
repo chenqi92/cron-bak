@@ -5,6 +5,8 @@ import type {
   User,
   LoginRequest,
   RegisterRequest,
+  LoginResponse,
+  AuthStatusResponse,
   BackupTask,
   CreateTaskRequest,
   BackupLog,
@@ -82,14 +84,14 @@ class ApiClient {
   }
 
   // Auth API
-  async login(data: LoginRequest): Promise<ApiResponse<{ token: string; user: User }>> {
+  async login(data: LoginRequest): Promise<LoginResponse> {
     console.log('API client login called with:', data)
     console.log('Making request to:', this.instance.defaults.baseURL + '/auth/login')
     try {
       const response = await this.instance.post('/auth/login', data)
       console.log('API response received:', response)
       // Response interceptor returns response.data, which is already in ApiResponse format
-      return response as ApiResponse<{ token: string; user: User }>
+      return response as unknown as LoginResponse
     } catch (error: any) {
       console.error('API request failed:', error)
       // Error interceptor already returns error.response.data or error.message
@@ -103,10 +105,10 @@ class ApiClient {
     }
   }
 
-  async register(data: RegisterRequest): Promise<ApiResponse<{ token: string; user: User }>> {
+  async register(data: RegisterRequest): Promise<LoginResponse> {
     try {
       const response = await this.instance.post('/auth/register', data)
-      return response as ApiResponse<{ token: string; user: User }>
+      return response as unknown as LoginResponse
     } catch (error: any) {
       if (typeof error === 'object' && error.success === false) {
         return error
@@ -122,12 +124,12 @@ class ApiClient {
     return this.instance.post('/auth/logout')
   }
 
-  async getAuthStatus(): Promise<ApiResponse<{ isAuthenticated: boolean; user?: User }>> {
+  async getAuthStatus(): Promise<AuthStatusResponse> {
     console.log('API: Getting auth status...')
     try {
       const response = await this.instance.get('/auth/status')
       console.log('API: Auth status response:', response)
-      return response as ApiResponse<{ isAuthenticated: boolean; user?: User }>
+      return response as unknown as AuthStatusResponse
     } catch (error: any) {
       console.error('API: Auth status failed:', error)
       if (typeof error === 'object' && error.success === false) {
