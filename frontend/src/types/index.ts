@@ -39,6 +39,7 @@ export interface BackupTask {
   schedule: string
   source_config: Record<string, any>
   destination_config: Record<string, any>
+  options?: TaskOptions
   last_run?: string
   next_run?: string
   created_at: string
@@ -52,6 +53,70 @@ export interface CreateTaskRequest {
   schedule: string
   source_config: Record<string, any>
   destination_config: Record<string, any>
+  options?: TaskOptions
+}
+
+// MySQL Configuration
+export interface MySQLConfig {
+  host: string
+  port: number
+  username: string
+  password: string
+  database?: string
+  ssl?: {
+    ca?: string
+    cert?: string
+    key?: string
+    rejectUnauthorized?: boolean
+  }
+  connectionLimit?: number
+  timeout?: number
+}
+
+// SMB Configuration
+export interface SMBConfig {
+  host: string
+  port: number
+  username: string
+  password: string
+  domain?: string
+  share: string
+  path: string
+  timeout?: number
+}
+
+// MinIO/S3 Configuration
+export interface MinIOConfig {
+  endPoint: string
+  port: number
+  useSSL: boolean
+  accessKey: string
+  secretKey: string
+  bucket: string
+  region?: string
+}
+
+// Task Options
+export interface TaskOptions {
+  // MySQL sync options
+  tables?: string[]
+  syncMode?: 'force' | 'merge'
+  dropTables?: boolean
+  truncateTables?: boolean
+  batchSize?: number
+  continueOnError?: boolean
+
+  // S3 sync options
+  prefix?: string
+  forceOverwrite?: boolean
+  deleteExtraFiles?: boolean
+  delayMs?: number
+  verbose?: boolean
+
+  // General options
+  retryCount?: number
+  retryDelay?: number
+  timeout?: number
 }
 
 // Log Types

@@ -22,12 +22,12 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.login(credentials)
       console.log('API response:', response)
 
-      if (response.success && response.token && response.user) {
+      if (response.success && response.data?.token && response.data?.user) {
         console.log('Login successful, setting token and user')
-        token.value = response.token
-        user.value = response.user
-        api.setToken(response.token)
-        localStorage.setItem('user', JSON.stringify(response.user))
+        token.value = response.data.token
+        user.value = response.data.user
+        api.setToken(response.data.token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
         return { success: true }
       }
       console.log('Login failed, response:', response)
@@ -44,11 +44,11 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       const response = await api.register(userData)
-      if (response.success && response.token && response.user) {
-        token.value = response.token
-        user.value = response.user
-        api.setToken(response.token)
-        localStorage.setItem('user', JSON.stringify(response.user))
+      if (response.success && response.data?.token && response.data?.user) {
+        token.value = response.data.token
+        user.value = response.data.user
+        api.setToken(response.data.token)
+        localStorage.setItem('user', JSON.stringify(response.data.user))
         return { success: true }
       }
       return { success: false, error: response.error || response.message || 'Registration failed' }
@@ -90,10 +90,10 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.getAuthStatus()
       console.log('Auth status response:', response)
 
-      if (response.success && response.isAuthenticated) {
-        if (response.user) {
-          user.value = response.user
-          localStorage.setItem('user', JSON.stringify(response.user))
+      if (response.success && response.data?.isAuthenticated) {
+        if (response.data?.user) {
+          user.value = response.data.user
+          localStorage.setItem('user', JSON.stringify(response.data.user))
         }
         console.log('Auth status check successful')
         return true

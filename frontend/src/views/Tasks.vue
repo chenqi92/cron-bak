@@ -322,7 +322,7 @@ const handleFilterChange = () => {
 const applyFilters = () => {
   const filters = {
     keyword: searchKeyword.value,
-    type: filterType.value,
+    type: filterType.value || undefined,
     active: filterActive.value || undefined,
     page: 1,
     pageSize: pagination.value.pageSize

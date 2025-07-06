@@ -65,7 +65,10 @@
           :is="sourceConfigComponent"
           v-model:config="formData.source_config"
           :rules="sourceConfigRules"
+          :show-table-selection="formData.type === 'mysql_to_mysql'"
+          :task-type="formData.type"
           prefix="source"
+          @update:tables="handleTablesUpdate"
         />
       </n-card>
 
@@ -75,9 +78,16 @@
           :is="destinationConfigComponent"
           v-model:config="formData.destination_config"
           :rules="destinationConfigRules"
+          :task-type="formData.type"
           prefix="destination"
         />
       </n-card>
+
+      <!-- Sync Options -->
+      <SyncOptions
+        v-model:options="taskOptions"
+        :task-type="formData.type"
+      />
     </n-form>
 
     <template #action>
@@ -107,6 +117,7 @@ import type { BackupTask, CreateTaskRequest, TaskType } from '@/types'
 import MySQLConfig from './config/MySQLConfig.vue'
 import SMBConfig from './config/SMBConfig.vue'
 import MinIOConfig from './config/MinIOConfig.vue'
+import SyncOptions from './config/SyncOptions.vue'
 
 interface Props {
   show: boolean
@@ -145,7 +156,19 @@ const formData = ref<CreateTaskRequest>({
   type: 'mysql_to_mysql',
   schedule: '0 2 * * *',
   source_config: {},
-  destination_config: {}
+  destination_config: {},
+  options: {}
+})
+
+// Selected tables for MySQL sync
+const selectedTables = ref<string[]>([])
+
+// Task options computed property
+const taskOptions = computed({
+  get: () => formData.value.options || {},
+  set: (value) => {
+    formData.value.options = value
+  }
 })
 
 // Task type options
@@ -207,6 +230,18 @@ const handleTypeChange = () => {
   // Reset configs when type changes
   formData.value.source_config = {}
   formData.value.destination_config = {}
+  formData.value.options = {}
+  selectedTables.value = []
+}
+
+const handleTablesUpdate = (...args: unknown[]) => {
+  const tables = args[0] as string[]
+  selectedTables.value = tables
+  if (formData.value.options) {
+    formData.value.options.tables = tables
+  } else {
+    formData.value.options = { tables }
+  }
 }
 
 const handleSubmit = async () => {
@@ -228,8 +263,10 @@ const resetForm = () => {
     type: 'mysql_to_mysql',
     schedule: '0 2 * * *',
     source_config: {},
-    destination_config: {}
+    destination_config: {},
+    options: {}
   }
+  selectedTables.value = []
 }
 
 // Watch for task changes
@@ -242,7 +279,12 @@ watch(
         type: newTask.type,
         schedule: newTask.schedule,
         source_config: { ...newTask.source_config },
-        destination_config: { ...newTask.destination_config }
+        destination_config: { ...newTask.destination_config },
+        options: { ...newTask.options } || {}
+      }
+      // Set selected tables if available
+      if (newTask.options?.tables) {
+        selectedTables.value = [...newTask.options.tables]
       }
     } else {
       resetForm()

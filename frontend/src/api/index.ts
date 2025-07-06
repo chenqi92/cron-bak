@@ -88,18 +88,29 @@ class ApiClient {
     try {
       const response = await this.instance.post('/auth/login', data)
       console.log('API response received:', response)
-      // Note: response interceptor already returns response.data, so response is the actual data
-      return response
+      // Response interceptor returns response.data, which should be ApiResponse format
+      return response as unknown as ApiResponse<{ token: string; user: User }>
     } catch (error: any) {
       console.error('API request failed:', error)
       console.error('Error response:', error.response?.data)
       console.error('Error status:', error.response?.status)
-      throw error
+      return {
+        success: false,
+        error: error.response?.data?.error || error.message || 'Login failed'
+      }
     }
   }
 
   async register(data: RegisterRequest): Promise<ApiResponse<{ token: string; user: User }>> {
-    return this.instance.post('/auth/register', data)
+    try {
+      const response = await this.instance.post('/auth/register', data)
+      return response as unknown as ApiResponse<{ token: string; user: User }>
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.response?.data?.error || error.message || 'Registration failed'
+      }
+    }
   }
 
   async logout(): Promise<ApiResponse> {
@@ -111,10 +122,13 @@ class ApiClient {
     try {
       const response = await this.instance.get('/auth/status')
       console.log('API: Auth status response:', response)
-      return response
+      return response as unknown as ApiResponse<{ isAuthenticated: boolean; user?: User }>
     } catch (error: any) {
       console.error('API: Auth status failed:', error)
-      throw error
+      return {
+        success: false,
+        error: error.response?.data?.error || error.message || 'Auth status check failed'
+      }
     }
   }
 

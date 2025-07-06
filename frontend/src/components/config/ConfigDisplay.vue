@@ -34,6 +34,9 @@
           <span v-if="maskSensitive">{{ maskPassword(config.password) }}</span>
           <span v-else>{{ config.password || '-' }}</span>
         </n-descriptions-item>
+        <n-descriptions-item v-if="config.domain" :label="$t('tasks.smbDomain')">
+          {{ config.domain }}
+        </n-descriptions-item>
         <n-descriptions-item :label="$t('tasks.smbShare')">
           {{ config.share || '-' }}
         </n-descriptions-item>
@@ -44,7 +47,10 @@
 
       <template v-else-if="type === 'minio'">
         <n-descriptions-item :label="$t('tasks.minioEndpoint')">
-          {{ config.endpoint || '-' }}
+          {{ config.endPoint || '-' }}
+        </n-descriptions-item>
+        <n-descriptions-item :label="$t('tasks.minioPort')">
+          {{ config.port || '-' }}
         </n-descriptions-item>
         <n-descriptions-item :label="$t('tasks.minioAccessKey')">
           {{ config.accessKey || '-' }}
@@ -58,9 +64,6 @@
         </n-descriptions-item>
         <n-descriptions-item :label="$t('tasks.minioRegion')">
           {{ config.region || '-' }}
-        </n-descriptions-item>
-        <n-descriptions-item v-if="config.prefix" :label="$t('tasks.minioPrefix')">
-          {{ config.prefix }}
         </n-descriptions-item>
         <n-descriptions-item :label="$t('tasks.minioSSL')">
           <n-tag :type="config.useSSL ? 'success' : 'default'" size="small">

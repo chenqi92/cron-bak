@@ -1,12 +1,24 @@
 <template>
   <div class="minio-config">
     <n-grid :cols="2" :x-gap="16" :y-gap="16">
-      <n-grid-item :span="2">
-        <n-form-item :label="$t('tasks.minioEndpoint')" :path="`${prefix}_config.endpoint`">
+      <n-grid-item>
+        <n-form-item :label="$t('tasks.minioEndpoint')" :path="`${prefix}_config.endPoint`">
           <n-input
-            v-model:value="config.endpoint"
+            v-model:value="config.endPoint"
             :placeholder="$t('tasks.endpointRequired')"
             clearable
+          />
+        </n-form-item>
+      </n-grid-item>
+
+      <n-grid-item>
+        <n-form-item :label="$t('tasks.minioPort')" :path="`${prefix}_config.port`">
+          <n-input-number
+            v-model:value="config.port"
+            :placeholder="9000"
+            :min="1"
+            :max="65535"
+            style="width: 100%"
           />
         </n-form-item>
       </n-grid-item>
@@ -53,18 +65,7 @@
         </n-form-item>
       </n-grid-item>
       
-      <n-grid-item :span="2">
-        <n-form-item :label="$t('tasks.minioPrefix')" :path="`${prefix}_config.prefix`">
-          <n-input
-            v-model:value="config.prefix"
-            placeholder="backups/"
-            clearable
-          />
-          <template #feedback>
-            <span class="text-gray-500">{{ $t('tasks.minioPrefixHelp') }}</span>
-          </template>
-        </n-form-item>
-      </n-grid-item>
+
       
       <n-grid-item :span="2">
         <n-form-item :label="$t('tasks.minioSSL')">
@@ -120,12 +121,12 @@ import { useMessage } from 'naive-ui'
 import { Flash as TestIcon } from '@vicons/ionicons5'
 
 interface MinIOConfig {
-  endpoint?: string
+  endPoint?: string
+  port?: number
   accessKey?: string
   secretKey?: string
   bucket?: string
   region?: string
-  prefix?: string
   useSSL?: boolean
 }
 
@@ -151,12 +152,12 @@ const message = useMessage()
 // Local config state
 const config = computed({
   get: () => ({
-    endpoint: props.config.endpoint || '',
+    endPoint: props.config.endPoint || '',
+    port: props.config.port || 9000,
     accessKey: props.config.accessKey || '',
     secretKey: props.config.secretKey || '',
     bucket: props.config.bucket || '',
     region: props.config.region || 'us-east-1',
-    prefix: props.config.prefix || '',
     useSSL: props.config.useSSL !== undefined ? props.config.useSSL : true,
     ...props.config
   }),
@@ -169,7 +170,7 @@ const testResult = ref<{ success: boolean; message: string } | null>(null)
 
 // Test connection method
 const testConnection = async () => {
-  if (!config.value.endpoint || !config.value.accessKey || !config.value.secretKey || !config.value.bucket) {
+  if (!config.value.endPoint || !config.value.accessKey || !config.value.secretKey || !config.value.bucket) {
     message.warning(t('tasks.fillRequiredFields'))
     return
   }

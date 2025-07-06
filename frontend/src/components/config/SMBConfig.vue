@@ -32,7 +32,7 @@
           />
         </n-form-item>
       </n-grid-item>
-      
+
       <n-grid-item>
         <n-form-item :label="$t('tasks.smbPassword')" :path="`${prefix}_config.password`">
           <n-input
@@ -40,6 +40,16 @@
             type="password"
             :placeholder="$t('tasks.passwordRequired')"
             show-password-on="click"
+            clearable
+          />
+        </n-form-item>
+      </n-grid-item>
+
+      <n-grid-item>
+        <n-form-item :label="$t('tasks.smbDomain')" :path="`${prefix}_config.domain`">
+          <n-input
+            v-model:value="config.domain"
+            :placeholder="$t('tasks.smbDomainPlaceholder')"
             clearable
           />
         </n-form-item>
@@ -106,8 +116,10 @@ interface SMBConfig {
   port?: number
   username?: string
   password?: string
+  domain?: string
   share?: string
   path?: string
+  timeout?: number
 }
 
 interface Props {
@@ -136,8 +148,10 @@ const config = computed({
     port: props.config.port || 445,
     username: props.config.username || '',
     password: props.config.password || '',
+    domain: props.config.domain || '',
     share: props.config.share || '',
     path: props.config.path || '/',
+    timeout: props.config.timeout || 30000,
     ...props.config
   }),
   set: (value) => emit('update:config', value)
