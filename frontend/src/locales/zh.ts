@@ -124,42 +124,6 @@ export default {
     exportFailed: '导出失败'
   },
   
-  tasks: {
-    title: '备份任务',
-    createTask: '创建任务',
-    editTask: '编辑任务',
-    taskName: '任务名称',
-    taskType: '任务类型',
-    schedule: '计划',
-    sourceConfig: '源配置',
-    destinationConfig: '目标配置',
-    lastRun: '上次运行',
-    nextRun: '下次运行',
-    active: '活跃',
-    inactive: '非活跃',
-    running: '运行中',
-    pending: '等待中',
-    success: '成功',
-    failed: '失败',
-    cancelled: '已取消',
-    runNow: '立即运行',
-    toggleStatus: '切换状态',
-    deleteTask: '删除任务',
-    confirmDelete: '确认删除此任务？',
-    createSuccess: '任务创建成功',
-    createFailed: '任务创建失败',
-    updateSuccess: '任务更新成功',
-    updateFailed: '任务更新失败',
-    deleteSuccess: '任务删除成功',
-    deleteFailed: '任务删除失败',
-    runSuccess: '任务启动成功',
-    runFailed: '任务启动失败',
-    noTasks: '暂无备份任务',
-    mysqlToMysql: 'MySQL 到 MySQL',
-    mysqlToSmb: 'MySQL 到 SMB',
-    minioToMinio: 'MinIO 到 MinIO'
-  },
-  
   logs: {
     title: '备份日志',
     taskName: '任务名称',
@@ -233,23 +197,6 @@ export default {
     saveFailed: '设置保存失败',
     resetSettings: '重置设置',
     confirmReset: '确认重置所有设置？'
-  },
-  
-  time: {
-    justNow: '刚刚',
-    minutesAgo: '分钟前',
-    hoursAgo: '小时前',
-    daysAgo: '天前',
-    weeksAgo: '周前',
-    monthsAgo: '月前',
-    yearsAgo: '年前',
-    seconds: '秒',
-    minutes: '分钟',
-    hours: '小时',
-    days: '天',
-    weeks: '周',
-    months: '月',
-    years: '年'
   },
   
   validation: {
@@ -417,9 +364,19 @@ export default {
 
   // Time related
   time: {
-    days: '天',
-    hours: '小时',
+    justNow: '刚刚',
+    minutesAgo: '分钟前',
+    hoursAgo: '小时前',
+    daysAgo: '天前',
+    weeksAgo: '周前',
+    monthsAgo: '月前',
+    yearsAgo: '年前',
+    seconds: '秒',
     minutes: '分钟',
-    seconds: '秒'
+    hours: '小时',
+    days: '天',
+    weeks: '周',
+    months: '月',
+    years: '年'
   }
 }

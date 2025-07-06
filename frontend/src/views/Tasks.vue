@@ -111,7 +111,7 @@ import { ref, computed, onMounted, h } from 'vue'
 import { useMessage, useDialog, type DataTableColumns } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { useTasksStore } from '@/stores/tasks'
-import { showToast } from '@/utils/toast'
+import { toast } from '@/utils/toast'
 import type { BackupTask, CreateTaskRequest, TaskType } from '@/types'
 import {
   Add as AddIcon,
@@ -323,7 +323,7 @@ const applyFilters = () => {
   const filters = {
     keyword: searchKeyword.value,
     type: filterType.value,
-    active: filterActive.value,
+    active: filterActive.value || undefined,
     page: 1,
     pageSize: pagination.value.pageSize
   }
@@ -336,9 +336,9 @@ const applyFilters = () => {
 const handleRefresh = async () => {
   const result = await tasksStore.refresh()
   if (result.success) {
-    showToast.success(t('common.refreshSuccess'))
+    toast.success(t('common.refreshSuccess'))
   } else {
-    showToast.error(result.error || t('common.refreshFailed'))
+    toast.error(result.error || t('common.refreshFailed'))
   }
 }
 
@@ -374,18 +374,18 @@ const handleEditTask = (task: BackupTask) => {
 const handleRunTask = async (taskId: number) => {
   const result = await tasksStore.runTask(taskId)
   if (result.success) {
-    showToast.success(t('tasks.runSuccess'))
+    toast.success(t('tasks.runSuccess'))
   } else {
-    showToast.error(result.error || t('tasks.runFailed'))
+    toast.error(result.error || t('tasks.runFailed'))
   }
 }
 
 const handleToggleTask = async (taskId: number) => {
   const result = await tasksStore.toggleTask(taskId)
   if (result.success) {
-    showToast.success(t('tasks.toggleSuccess'))
+    toast.success(t('tasks.toggleSuccess'))
   } else {
-    showToast.error(result.error || t('tasks.toggleFailed'))
+    toast.error(result.error || t('tasks.toggleFailed'))
   }
 }
 
@@ -398,10 +398,10 @@ const handleDeleteTask = (task: BackupTask) => {
     onPositiveClick: async () => {
       const result = await tasksStore.deleteTask(task.id)
       if (result.success) {
-        showToast.success(t('tasks.deleteSuccess'))
+        toast.success(t('tasks.deleteSuccess'))
         showDetailsModal.value = false
       } else {
-        showToast.error(result.error || t('tasks.deleteFailed'))
+        toast.error(result.error || t('tasks.deleteFailed'))
       }
     }
   })
@@ -444,17 +444,17 @@ const handleTaskSubmit = async (taskData: CreateTaskRequest) => {
     // Update existing task
     result = await tasksStore.updateTask(editingTask.value.id, taskData)
     if (result.success) {
-      showToast.success(t('tasks.updateSuccess'))
+      toast.success(t('tasks.updateSuccess'))
     } else {
-      showToast.error(result.error || t('tasks.updateFailed'))
+      toast.error(result.error || t('tasks.updateFailed'))
     }
   } else {
     // Create new task
     result = await tasksStore.createTask(taskData)
     if (result.success) {
-      showToast.success(t('tasks.createSuccess'))
+      toast.success(t('tasks.createSuccess'))
     } else {
-      showToast.error(result.error || t('tasks.createFailed'))
+      toast.error(result.error || t('tasks.createFailed'))
     }
   }
 

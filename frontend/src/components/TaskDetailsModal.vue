@@ -147,7 +147,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { BackupTask } from '@/types'
 import {
-  Edit as EditIcon,
+  Create as EditIcon,
   Play as PlayIcon,
   Pause as PauseIcon,
   Trash as TrashIcon
@@ -186,7 +186,7 @@ const showModal = computed({
 
 // Helper methods
 const getTaskTypeLabel = (type: string) => {
-  const typeMap = {
+  const typeMap: Record<string, string> = {
     'mysql_to_mysql': t('tasks.mysqlToMysql'),
     'mysql_to_smb': t('tasks.mysqlToSmb'),
     'minio_to_minio': t('tasks.minioToMinio')
