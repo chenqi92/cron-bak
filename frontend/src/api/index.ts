@@ -88,15 +88,17 @@ class ApiClient {
     try {
       const response = await this.instance.post('/auth/login', data)
       console.log('API response received:', response)
-      // Response interceptor returns response.data, which should be ApiResponse format
-      return response as unknown as ApiResponse<{ token: string; user: User }>
+      // Response interceptor returns response.data, which is already in ApiResponse format
+      return response as ApiResponse<{ token: string; user: User }>
     } catch (error: any) {
       console.error('API request failed:', error)
-      console.error('Error response:', error.response?.data)
-      console.error('Error status:', error.response?.status)
+      // Error interceptor already returns error.response.data or error.message
+      if (typeof error === 'object' && error.success === false) {
+        return error
+      }
       return {
         success: false,
-        error: error.response?.data?.error || error.message || 'Login failed'
+        error: error.error || error.message || 'Login failed'
       }
     }
   }
@@ -104,11 +106,14 @@ class ApiClient {
   async register(data: RegisterRequest): Promise<ApiResponse<{ token: string; user: User }>> {
     try {
       const response = await this.instance.post('/auth/register', data)
-      return response as unknown as ApiResponse<{ token: string; user: User }>
+      return response as ApiResponse<{ token: string; user: User }>
     } catch (error: any) {
+      if (typeof error === 'object' && error.success === false) {
+        return error
+      }
       return {
         success: false,
-        error: error.response?.data?.error || error.message || 'Registration failed'
+        error: error.error || error.message || 'Registration failed'
       }
     }
   }
@@ -122,12 +127,15 @@ class ApiClient {
     try {
       const response = await this.instance.get('/auth/status')
       console.log('API: Auth status response:', response)
-      return response as unknown as ApiResponse<{ isAuthenticated: boolean; user?: User }>
+      return response as ApiResponse<{ isAuthenticated: boolean; user?: User }>
     } catch (error: any) {
       console.error('API: Auth status failed:', error)
+      if (typeof error === 'object' && error.success === false) {
+        return error
+      }
       return {
         success: false,
-        error: error.response?.data?.error || error.message || 'Auth status check failed'
+        error: error.error || error.message || 'Auth status check failed'
       }
     }
   }

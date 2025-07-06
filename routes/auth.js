@@ -48,6 +48,7 @@ router.post('/register', validate(schemas.register), async (req, res) => {
     });
 
     res.status(400).json({
+      success: false,
       error: error.message || 'Registration failed'
     });
   }
@@ -126,6 +127,7 @@ router.post('/login', validate(schemas.login), async (req, res) => {
       } else {
         logger.authEvent('login_failed', username, ip);
         res.status(401).json({
+          success: false,
           error: 'Invalid username or password'
         });
       }
@@ -133,6 +135,7 @@ router.post('/login', validate(schemas.login), async (req, res) => {
   } catch (error) {
     logger.error('Login error:', error);
     res.status(500).json({
+      success: false,
       error: 'Login failed',
       message: 'An internal error occurred'
     });
