@@ -273,5 +273,153 @@ export default {
     next: '下一页',
     first: '首页',
     last: '末页'
+  },
+
+  tasks: {
+    title: '备份任务',
+    createTask: '创建任务',
+    editTask: '编辑任务',
+    deleteTask: '删除任务',
+    runTask: '立即运行',
+    toggleTask: '切换状态',
+    taskName: '任务名称',
+    taskType: '任务类型',
+    taskStatus: '任务状态',
+    taskSchedule: '执行计划',
+    lastRun: '上次运行',
+    nextRun: '下次运行',
+    sourceConfig: '源配置',
+    destinationConfig: '目标配置',
+    active: '活跃',
+    inactive: '非活跃',
+    running: '运行中',
+    success: '成功',
+    failed: '失败',
+    pending: '等待中',
+    cancelled: '已取消',
+
+    // Task types
+    mysqlToMysql: 'MySQL 到 MySQL',
+    mysqlToSmb: 'MySQL 到 SMB',
+    minioToMinio: 'MinIO 到 MinIO',
+
+    // Form labels
+    name: '任务名称',
+    type: '备份类型',
+    schedule: '执行计划',
+    description: '任务描述',
+
+    // MySQL config
+    mysqlHost: 'MySQL 主机',
+    mysqlPort: 'MySQL 端口',
+    mysqlUsername: 'MySQL 用户名',
+    mysqlPassword: 'MySQL 密码',
+    mysqlDatabase: 'MySQL 数据库',
+
+    // SMB config
+    smbHost: 'SMB 主机',
+    smbPort: 'SMB 端口',
+    smbUsername: 'SMB 用户名',
+    smbPassword: 'SMB 密码',
+    smbShare: 'SMB 共享',
+    smbPath: 'SMB 路径',
+
+    // MinIO config
+    minioEndpoint: 'MinIO 端点',
+    minioAccessKey: 'MinIO 访问密钥',
+    minioSecretKey: 'MinIO 密钥',
+    minioBucket: 'MinIO 存储桶',
+    minioRegion: 'MinIO 区域',
+
+    // Messages
+    createSuccess: '任务创建成功',
+    createFailed: '任务创建失败',
+    updateSuccess: '任务更新成功',
+    updateFailed: '任务更新失败',
+    deleteSuccess: '任务删除成功',
+    deleteFailed: '任务删除失败',
+    runSuccess: '任务运行成功',
+    runFailed: '任务运行失败',
+    toggleSuccess: '任务状态切换成功',
+    toggleFailed: '任务状态切换失败',
+    deleteConfirm: '确定要删除这个任务吗？此操作不可撤销。',
+
+    // Validation
+    nameRequired: '请输入任务名称',
+    typeRequired: '请选择任务类型',
+    scheduleRequired: '请输入执行计划',
+    scheduleInvalid: '执行计划格式无效，请使用 Cron 表达式',
+    hostRequired: '请输入主机地址',
+    portRequired: '请输入端口号',
+    usernameRequired: '请输入用户名',
+    passwordRequired: '请输入密码',
+    databaseRequired: '请输入数据库名称',
+    shareRequired: '请输入共享名称',
+    pathRequired: '请输入路径',
+    endpointRequired: '请输入端点地址',
+    accessKeyRequired: '请输入访问密钥',
+    secretKeyRequired: '请输入密钥',
+    bucketRequired: '请输入存储桶名称',
+
+    // Filters
+    filterByType: '按类型筛选',
+    filterByStatus: '按状态筛选',
+    searchPlaceholder: '搜索任务名称...',
+    allTypes: '所有类型',
+    allStatuses: '所有状态',
+
+    // Actions
+    viewDetails: '查看详情',
+    editDetails: '编辑详情',
+    runNow: '立即运行',
+    enable: '启用',
+    disable: '禁用',
+    duplicate: '复制',
+    export: '导出',
+
+    // Schedule helpers
+    scheduleHelp: 'Cron 表达式格式：分 时 日 月 周',
+    scheduleExamples: '示例：',
+    scheduleDaily: '0 2 * * * (每天凌晨2点)',
+    scheduleWeekly: '0 2 * * 0 (每周日凌晨2点)',
+    scheduleMonthly: '0 2 1 * * (每月1号凌晨2点)',
+
+    // Empty states
+    noTasks: '暂无备份任务',
+    noTasksDesc: '创建您的第一个备份任务开始使用',
+    noFilterResults: '没有找到匹配的任务',
+    noFilterResultsDesc: '尝试调整筛选条件或搜索关键词',
+
+    // Additional fields
+    subtitle: '管理您的 {total} 个备份任务',
+    basicInfo: '基本信息',
+    taskDetails: '任务详情',
+    testConnection: '测试连接',
+    connectionSuccess: '连接成功',
+    connectionFailed: '连接失败',
+    connectionTestSuccess: '连接测试成功',
+    connectionTestFailed: '连接测试失败',
+    connectionTestError: '连接测试出错',
+    fillRequiredFields: '请填写必填字段',
+    showSensitive: '显示敏感信息',
+    hideSensitive: '隐藏敏感信息',
+
+    // MinIO specific
+    minioPrefix: 'MinIO 前缀',
+    minioPrefixHelp: '可选的对象前缀，用于组织备份文件',
+    minioSSL: '使用 SSL',
+
+    // Common
+    enabled: '已启用',
+    disabled: '已禁用',
+    never: '从未'
+  },
+
+  // Time related
+  time: {
+    days: '天',
+    hours: '小时',
+    minutes: '分钟',
+    seconds: '秒'
   }
 }

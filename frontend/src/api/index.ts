@@ -183,7 +183,7 @@ class ApiClient {
     return this.instance.post(`/tasks/${id}/run`)
   }
 
-  async toggleTaskStatus(id: number): Promise<ApiResponse<BackupTask>> {
+  async toggleTask(id: number): Promise<ApiResponse<BackupTask>> {
     return this.instance.post(`/tasks/${id}/toggle`)
   }
 

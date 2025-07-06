@@ -35,7 +35,7 @@ export interface BackupTask {
   id: number
   name: string
   type: TaskType
-  status: TaskStatus
+  is_active: boolean
   schedule: string
   source_config: Record<string, any>
   destination_config: Record<string, any>
@@ -43,7 +43,7 @@ export interface BackupTask {
   next_run?: string
   created_at: string
   updated_at: string
-  user_id: number
+  user_id?: number
 }
 
 export interface CreateTaskRequest {
@@ -221,7 +221,7 @@ export interface LogFilter {
 }
 
 export interface TaskFilter {
-  status?: TaskStatus
+  active?: boolean
   type?: TaskType
   keyword?: string
 }
