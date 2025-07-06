@@ -18,7 +18,11 @@ import type {
   ExportData,
   LogFilter,
   TaskFilter,
-  PaginationInfo
+  PaginationInfo,
+  Storage,
+  CreateStorageRequest,
+  UpdateStorageRequest,
+  StorageTestResult
 } from '@/types'
 
 class ApiClient {
@@ -282,6 +286,31 @@ class ApiClient {
 
   async getSchedulePresets(): Promise<ApiResponse<Array<{ value: string; label: string; description: string }>>> {
     return this.instance.get('/schedule-presets')
+  }
+
+  // Storages API
+  async getStorages(): Promise<ApiResponse<Storage[]>> {
+    return this.instance.get('/storages')
+  }
+
+  async createStorage(data: CreateStorageRequest): Promise<ApiResponse<Storage>> {
+    return this.instance.post('/storages', data)
+  }
+
+  async updateStorage(id: string, data: UpdateStorageRequest): Promise<ApiResponse<Storage>> {
+    return this.instance.put(`/storages/${id}`, data)
+  }
+
+  async deleteStorage(id: string): Promise<ApiResponse> {
+    return this.instance.delete(`/storages/${id}`)
+  }
+
+  async testStorage(id: string): Promise<ApiResponse<StorageTestResult>> {
+    return this.instance.post(`/storages/${id}/test`)
+  }
+
+  async testAllStorages(): Promise<ApiResponse<StorageTestResult[]>> {
+    return this.instance.post('/storages/test-all')
   }
 }
 

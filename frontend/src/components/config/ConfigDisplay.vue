@@ -111,7 +111,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Eye as EyeIcon, EyeOff as EyeOffIcon } from '@vicons/ionicons5'
+import { Eye as EyeIcon, Close as EyeOffIcon } from '@vicons/ionicons5'
 
 interface Props {
   config: Record<string, any>

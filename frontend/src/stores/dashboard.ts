@@ -27,14 +27,19 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const loadOverview = async () => {
     isLoading.value = true
     try {
+      console.log('DashboardStore: Loading overview...')
       const response = await api.getDashboardOverview()
+      console.log('DashboardStore: Overview response:', response)
       if (response.success && response.data) {
         stats.value = response.data
         lastUpdated.value = new Date()
+        console.log('DashboardStore: Stats updated:', stats.value)
         return { success: true }
       }
+      console.error('DashboardStore: Overview failed:', response.error)
       return { success: false, error: response.error || 'Failed to load dashboard data' }
     } catch (error: any) {
+      console.error('DashboardStore: Overview error:', error)
       return { success: false, error: error.message || 'Failed to load dashboard data' }
     } finally {
       isLoading.value = false
@@ -153,8 +158,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
   }
 
   const init = async () => {
-    await refresh()
+    console.log('DashboardStore: Initializing...')
+    const result = await refresh()
+    console.log('DashboardStore: Refresh result:', result)
     startAutoRefresh()
+    return result
   }
 
   const destroy = () => {

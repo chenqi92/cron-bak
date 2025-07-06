@@ -1,7 +1,26 @@
 <template>
   <div class="dashboard">
-    <!-- Header -->
-    <div class="dashboard-header">
+    <!-- Loading State -->
+    <div v-if="isLoading && !stats" class="loading-container">
+      <n-spin size="large" />
+      <p>{{ $t('common.loading') }}</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="error-container">
+      <n-result status="error" :title="$t('common.error')" :description="error">
+        <template #footer>
+          <n-button @click="handleRefresh" type="primary">
+            {{ $t('common.retry') }}
+          </n-button>
+        </template>
+      </n-result>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div v-else class="dashboard-content">
+      <!-- Header -->
+      <div class="dashboard-header">
       <div class="header-content">
         <h1>{{ $t('dashboard.title') }}</h1>
         <p>{{ $t('dashboard.subtitle') }}</p>
@@ -182,6 +201,7 @@
         </n-card>
       </n-grid-item>
     </n-grid>
+    </div>
   </div>
 </template>
 
@@ -191,6 +211,7 @@ import { useRouter } from 'vue-router'
 import { useMessage, useDialog } from 'naive-ui'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
 import {
   Refresh as RefreshIcon,
@@ -200,7 +221,7 @@ import {
   Heart as HeartIcon,
   Trash as TrashIcon,
   Download as DownloadIcon,
-  Analytics as AnalyticsIcon
+  StatsChart as AnalyticsIcon
 } from '@vicons/ionicons5'
 
 // Import components (these will be created next)
@@ -215,21 +236,24 @@ const message = useMessage()
 const dialog = useDialog()
 const dashboardStore = useDashboardStore()
 const appStore = useAppStore()
+const authStore = useAuthStore()
 const { t } = useI18n()
 
 // Reactive data
 const chartPeriod = ref('30')
 const chartLoading = ref(false)
+const error = ref<string | null>(null)
 
 // Computed properties
 const isMobile = computed(() => window.innerWidth < 768)
 const isLoading = computed(() => dashboardStore.isLoading)
-const totalTasks = computed(() => dashboardStore.totalTasks)
-const activeTasks = computed(() => dashboardStore.activeTasks)
-const runningBackups = computed(() => dashboardStore.runningBackups)
-const successRate = computed(() => dashboardStore.successRate)
-const recentLogs = computed(() => dashboardStore.recentLogs)
-const nextRuns = computed(() => dashboardStore.nextRuns)
+const stats = computed(() => dashboardStore.stats)
+const totalTasks = computed(() => dashboardStore.totalTasks || 0)
+const activeTasks = computed(() => dashboardStore.activeTasks || 0)
+const runningBackups = computed(() => dashboardStore.runningBackups || 0)
+const successRate = computed(() => dashboardStore.successRate || 0)
+const recentLogs = computed(() => dashboardStore.recentLogs || [])
+const nextRuns = computed(() => dashboardStore.nextRuns || [])
 const systemHealth = computed(() => dashboardStore.systemHealth)
 
 const chartData = computed(() => {
@@ -258,11 +282,21 @@ const actionMenuOptions = computed(() => [
 
 // Methods
 const handleRefresh = async () => {
-  const result = await dashboardStore.refresh()
-  if (result.success) {
-    message.success(t('dashboard.refreshSuccess'))
-  } else {
-    message.error(result.error || t('dashboard.refreshFailed'))
+  try {
+    error.value = null
+    console.log('Dashboard: Starting refresh...')
+    const result = await dashboardStore.refresh()
+    console.log('Dashboard: Refresh result:', result)
+    if (result.success) {
+      message.success(t('dashboard.refreshSuccess'))
+    } else {
+      error.value = result.error || t('dashboard.refreshFailed')
+      message.error(result.error || t('dashboard.refreshFailed'))
+    }
+  } catch (err: any) {
+    console.error('Dashboard: Refresh error:', err)
+    error.value = err.message || t('dashboard.refreshFailed')
+    message.error(err.message || t('dashboard.refreshFailed'))
   }
 }
 
@@ -353,8 +387,24 @@ const goToCreateTask = () => {
 
 // Lifecycle
 onMounted(async () => {
-  await dashboardStore.init()
-  await handlePeriodChange(chartPeriod.value)
+  try {
+    console.log('Dashboard: Component mounted, initializing...')
+    console.log('Dashboard: Auth state:', {
+      isAuthenticated: authStore.isAuthenticated,
+      user: authStore.user,
+      token: authStore.token ? 'present' : 'missing'
+    })
+    error.value = null
+    const result = await dashboardStore.init()
+    console.log('Dashboard: Store init result:', result)
+    if (!result.success) {
+      error.value = result.error || 'Failed to initialize dashboard'
+    }
+    await handlePeriodChange(chartPeriod.value)
+  } catch (err: any) {
+    console.error('Dashboard: Mount error:', err)
+    error.value = err.message || 'Failed to initialize dashboard'
+  }
 })
 
 onUnmounted(() => {
@@ -366,6 +416,25 @@ onUnmounted(() => {
 .dashboard {
   max-width: 1400px;
   margin: 0 auto;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: #666;
+  font-size: 16px;
+}
+
+.dashboard-content {
+  width: 100%;
 }
 
 .dashboard-header {

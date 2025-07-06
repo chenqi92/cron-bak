@@ -152,6 +152,7 @@ import {
   SpeedometerOutline as DashboardIcon,
   ListOutline as TasksIcon,
   DocumentTextOutline as LogsIcon,
+  Server as StoragesIcon,
   NotificationsOutline as NotificationsIcon,
   StatsChartOutline as StatisticsIcon,
   SettingsOutline as SettingsIcon,
@@ -190,6 +191,11 @@ const menuOptions = computed((): MenuOption[] => [
     label: t('nav.logs'),
     key: 'Logs',
     icon: () => h(LogsIcon)
+  },
+  {
+    label: t('nav.storages'),
+    key: 'Storages',
+    icon: () => h(StoragesIcon)
   },
   {
     label: t('nav.notifications'),
@@ -236,6 +242,7 @@ const setSidebarCollapsed = (collapsed: boolean) => {
 }
 
 const handleMenuSelect = (key: string) => {
+  console.log('Layout: menu selected:', key)
   router.push({ name: key })
 }
 
@@ -247,13 +254,19 @@ const toggleAutoRefresh = () => {
 }
 
 const toggleTheme = () => {
+  console.log('Layout: toggleTheme clicked, current theme:', appStore.theme)
   const newTheme = isDarkMode.value ? 'light' : 'dark'
+  console.log('Layout: switching to theme:', newTheme)
   appStore.setTheme(newTheme)
+  message.success(`主题已切换到: ${newTheme === 'dark' ? '暗色' : '亮色'}`)
 }
 
 const toggleLanguage = () => {
+  console.log('Layout: toggleLanguage clicked, current language:', appStore.currentLanguage)
   const newLanguage = appStore.currentLanguage === 'zh' ? 'en' : 'zh'
+  console.log('Layout: switching to language:', newLanguage)
   appStore.setLanguage(newLanguage)
+  message.success(`语言已切换到: ${newLanguage}`)
 }
 
 const handleUserMenuSelect = (key: string) => {

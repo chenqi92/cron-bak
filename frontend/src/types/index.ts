@@ -317,3 +317,57 @@ export interface ExportData {
   logs: BackupLog[]
   statistics: StatisticsData
 }
+
+// Storage Types
+export interface Storage {
+  id: string
+  name: string
+  type: 'mysql' | 'minio' | 's3' | 'smb'
+  config: StorageConfig
+  createdAt: string
+  updatedAt: string
+}
+
+export interface StorageConfig {
+  // MySQL config
+  host?: string
+  port?: number
+  username?: string
+  password?: string
+  database?: string
+
+  // MinIO/S3 config
+  endpoint?: string
+  accessKey?: string
+  secretKey?: string
+  bucket?: string
+  useSSL?: boolean
+
+  // SMB config
+  sharePath?: string
+  domain?: string
+}
+
+export interface CreateStorageRequest {
+  name: string
+  type: 'mysql' | 'minio' | 's3' | 'smb'
+  config: StorageConfig
+}
+
+export interface UpdateStorageRequest {
+  name?: string
+  type?: 'mysql' | 'minio' | 's3' | 'smb'
+  config?: StorageConfig
+}
+
+export interface StorageTestResult {
+  storageId: string
+  storageName: string
+  storageType: string
+  testResult: {
+    success: boolean
+    message?: string
+    error?: string
+  }
+  testedAt: string
+}

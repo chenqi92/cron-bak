@@ -60,7 +60,7 @@ import {
   Reload as LoadingIcon,
   List as TasksIcon,
   Play as PlayIcon,
-  TrendingUp as ChartIcon,
+  ArrowUp as ChartIcon,
   Server as ServerIcon
 } from '@vicons/ionicons5'
 
