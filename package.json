@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node server.js",
     "start:full": "node scripts/start-with-notifications.js",
-    "dev": "nodemon server.js",
+    "dev": "node scripts/start-dev.js",
+    "dev:backend": "nodemon server.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "node scripts/build-production.js",
+    "build:frontend": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "install:all": "npm install && cd frontend && npm install",
     "test": "jest",
     "setup": "node scripts/setup.js",
     "migrate": "node scripts/migrate-user-data.js",
@@ -55,6 +61,7 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "jest": "^29.7.0",
     "nodemon": "^3.0.2",
     "supertest": "^6.3.3"

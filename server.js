@@ -67,7 +67,7 @@ app.use(session({
   }
 }));
 
-// Static files
+// Static files (built frontend)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
@@ -76,8 +76,14 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// Serve main application
-app.get('/', (req, res) => {
+// Serve main application (SPA fallback)
+app.get('*', (req, res, next) => {
+  // Skip API routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+    return next();
+  }
+
+  // Serve index.html for all other routes (SPA routing)
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
